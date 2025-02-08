@@ -1,0 +1,10 @@
+pipeline{
+agent any
+stages {
+stage ('build') {
+steps { 
+echo 'This is JenkinsFile Which Builds Jenkins Job using pipeline scirpt. We have to give the exact name  of the Jenkins file in the Job.'
+}
+}
+}
+}
