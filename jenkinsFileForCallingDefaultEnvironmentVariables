@@ -1,12 +1,17 @@
 pipeline {
-agent any
-stage {
-stage('run_playbook') {
-step { 
-env.BUILD_ID
-env.JOB_NAME
-env.JENKINS_HOME
-}
-}
-}
+    agent any
+    stages {
+        stage('run_playbook') {
+            steps { 
+                     echo env.BUILD_ID
+                     echo env.JOB_NAME
+                     echo env.JENKINS_HOME
+                script {
+                    echo "BUILD_ID: ${env.BUILD_ID}"
+                    echo "JOB_NAME: ${env.JOB_NAME}"
+                    echo "JENKINS_HOME: ${env.JENKINS_HOME}"
+                }
+            }
+        }
+    }
 }
