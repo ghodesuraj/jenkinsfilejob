@@ -1,0 +1,11 @@
+pipeline {
+agent any
+parameters { string(name: 'Server_Ip', defaultValue: 'Put Your Ip Here.', description: 'Please enter server Ip.') }
+stages {
+stage ('runplay')  {
+            steps {
+			    sh ''' ansible-playbook test.yml -i $Server_Ip
+		  }
+        }
+	}                                                                                           
+}
