@@ -1,0 +1,12 @@
+pipeline {
+agent any
+stage {
+stage('run_playbook') {
+step { 
+env.BUILD_ID
+env.JOB_NAME
+env.JENKINS_HOME
+}
+}
+}
+}
