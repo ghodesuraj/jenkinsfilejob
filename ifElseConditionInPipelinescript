@@ -1,0 +1,26 @@
+ipeline using Groovy scripting to check and create the directory if necessary:
+groovy
+CopyEdit
+pipeline {
+    agent any
+    
+    stages {
+        stage('Check and Create Directory') {
+            steps {
+                script {
+                    // Define the directory path
+                    def dirPath = '/path/to/directory'
+                    
+                    // Check if the directory exists
+                    if (!fileExists(dirPath)) {
+                        // Create the directory if it doesn't exist
+                        sh "mkdir -p ${dirPath}"
+                        echo "Directory created: ${dirPath}"
+                    } else {
+                        echo "Directory already exists: ${dirPath}"
+                    }
+                }
+            }
+        }
+    }
+}
