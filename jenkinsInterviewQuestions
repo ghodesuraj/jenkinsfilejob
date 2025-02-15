@@ -1,0 +1,26 @@
+Jenkins Interview Questions:
+1. Difference between Freestyle VS Pipeline
+2. What is pipeline as a code - explain
+3. what is parameters & give 3-4 types.
+4. What is shared libaraly
+5. Difference webhook & poll SCM
+6. Scripted vs Delarative pipeline
+7. Jenkins load distribution - How to
+8. How to manage artifact in Jenkins
+9. Blue green deploymnet in jenkins
+10. Build ocean & how to monitor jenkins
+
+### **Jenkins Interview Questions:**  
+
+1. What is the difference between a **Freestyle Project** and a **Pipeline** in Jenkins?  
+2. What is **Pipeline as Code**, and how does it work?  
+3. What are **parameters** in Jenkins? Explain and provide 3–4 types of parameters.  
+4. What is a **Shared Library** in Jenkins, and how is it used?  
+5. What is the difference between **Webhook** and **Poll SCM** in Jenkins?  
+6. What is the difference between **Scripted** and **Declarative Pipelines** in Jenkins?  
+7. How can Jenkins handle **load distribution** across multiple nodes?  
+8. How can you manage **artifacts** in Jenkins?  
+9. What is **Blue-Green Deployment** in Jenkins, and how is it implemented?  
+10. What is **Build Ocean** in Jenkins, and how can you monitor Jenkins effectively?  
+
+Sir: you said you will be provide more question, playbook, ymal scrip, shell scripting, python related documents, etc
