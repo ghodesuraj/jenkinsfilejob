@@ -1,0 +1,26 @@
+pipeline { agent any
+
+stages {
+    stage('Checkout') {
+        steps {
+          git branch: 'master', url: 'http://<Your_GitHub_Repo_URL>'
+              }
+            }
+stage('Install DEpendencies') {
+    steps {
+         script {
+                sh 'npm install'
+                } 
+           }
+     }
+post {
+    success {
+          echo 'Node.js Build & Deployment Successful.'
+    }
+    failure {
+            echo 'Build or Deployment Failed.'
+    }
+}
+
+}
+}
