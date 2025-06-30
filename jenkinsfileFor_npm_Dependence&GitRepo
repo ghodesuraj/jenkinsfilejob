@@ -3,7 +3,7 @@ pipeline { agent any
 stages {
     stage('Checkout') {
         steps {
-          git branch: 'master', url: 'http://<Your_GitHub_Repo_URL>'
+          git branch: 'main', url: 'http://<Your_GitHub_Repo_URL>'
               }
             }
 stage('Install DEpendencies') {
