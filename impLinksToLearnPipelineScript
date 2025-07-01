@@ -4,6 +4,15 @@ The following are some important links to learn how to create and type Jenkins F
 
 2. https://www.baeldung.com/ops/jenkins-conditional-constructs#:~:text=Effective%20Jenkins%20pipelines%20rely%20heavily,steps%2C%20or%20any%20other%20condition.
 
-3. https://www.jenkins.io/doc/book/pipeline/syntax/
+3. https://www.jenkins.io/doc/book/pipeline/syntax/   # This is an official website to learn Jenkins Groovy script for pipeline 
+  Topics to read in the above link:
+    i. When
+    ii. Post
+    iii. Stages
+    iv. Steps
+    v. Environment
+    vi. Parameters
+    vii. Input
+    ix. Options
 
 4. https://crontab.guru/
