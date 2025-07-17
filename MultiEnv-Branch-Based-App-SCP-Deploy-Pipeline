@@ -1,0 +1,99 @@
+pipeline {
+    agent any
+
+    parameters {
+        // Select which environment to deploy to
+        choice(name: 'DEPLOY_ENV', choices: ['dev', 'qa', 'prod', 'uat'], description: 'Choose environment to deploy')
+    }
+
+    environment {
+        // Common variables
+        APP_NAME = "tomcat10-jakartaee9"
+        TOMCAT_PATH = "/opt/tomcat"
+
+        // Pull credentials securely (add username/password in Jenkins > Manage Credentials)
+        CREDENTIALS_ID = 'tomcat-ssh-credentials' // e.g., use Jenkins credentials ID
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // Checkout the current Git branch
+                checkout scm
+            }
+        }
+
+        stage('Build') {
+            when {
+                anyOf {
+                    branch 'main'
+                    branch 'dev'
+                    branch 'qa'
+                    branch 'uat'
+                }
+            }
+            steps {
+                script {
+                    // Compile and package the app using Maven
+                    sh 'mvn clean install'
+                }
+            }
+        }
+
+        stage('Deploy') {
+            when {
+                anyOf {
+                    branch 'main'
+                    branch 'dev'
+                    branch 'qa'
+                    branch 'uat'
+                }
+            }
+            steps {
+                script {
+                    // Determine the remote server IP based on environment
+                    def remoteIP = ''
+                    if (params.DEPLOY_ENV == 'dev') {
+                        remoteIP = '172.31.10.10'
+                    } else if (params.DEPLOY_ENV == 'qa') {
+                        remoteIP = '172.31.20.20'
+                    } else if (params.DEPLOY_ENV == 'prod') {
+                        remoteIP = '172.31.30.30'
+                    } else if (params.DEPLOY_ENV == 'uat') {
+                        remoteIP = '172.31.30.40'
+                    }
+
+                    // Define WAR file and remote target directory
+                    def warFile = 'target/*.war'
+                    def remotePath = "${TOMCAT_PATH}/webapps"
+
+                    // Use Jenkins credentials securely (SSH username/password)
+                    withCredentials([usernamePassword(credentialsId: "${CREDENTIALS_ID}", usernameVariable: 'TOMCAT_USER', passwordVariable: 'TOMCAT_PASS')]) {
+                        
+                        // SCP WAR to remote server
+                        sh """
+                            sshpass -p '${TOMCAT_PASS}' scp -o StrictHostKeyChecking=no ${warFile} ${TOMCAT_USER}@${remoteIP}:${remotePath}
+                        """
+
+                        // Restart Tomcat remotely
+                        sh """
+                            sshpass -p '${TOMCAT_PASS}' ssh -o StrictHostKeyChecking=no ${TOMCAT_USER}@${remoteIP} '
+                                ${TOMCAT_PATH}/bin/shutdown.sh || true
+                                ${TOMCAT_PATH}/bin/startup.sh
+                            '
+                        """
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ Build & Deployment to ${params.DEPLOY_ENV} successful!"
+        }
+        failure {
+            echo "❌ Build or Deployment failed for ${params.DEPLOY_ENV}."
+        }
+    }
+}
