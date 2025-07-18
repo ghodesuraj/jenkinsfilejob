@@ -1,0 +1,94 @@
+pipeline {
+    agent any
+
+    parameters {
+        choice(name: 'DEPLOY_ENV', choices: ['dev', 'qa', 'prod'], description: 'Choose environment to deploy')
+    }
+
+    environment {
+        APP_NAME = "tomcat10-jakartaee9"
+        TOMCAT_PATH = "/opt/tomcat"
+        CREDENTIALS_ID = 'tomcat-ssh-credentials'
+        REPO_URL = "https://github.com/sadhix12/ecom-web-shk.git"
+    }
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                git branch: 'main', url: "${env.REPO_URL}"
+            }
+        }
+
+        stage('Build') {
+            steps {
+                echo "🔧 Building Application"
+                script {
+                    sh 'echo "Build step here (e.g., Maven/Gradle build)"'
+                }
+            }
+        }
+
+        stage('Deploy to DEV') {
+            when {
+                expression { params.DEPLOY_ENV == 'dev' }
+            }
+            steps {
+                echo "🚀 Deploying to DEV Environment"
+                sh 'cp dev/de.html /tmp/dev_de.html'
+                script {
+                    def sshUser = 'ubuntu'
+                    def ip = '13.232.107.77' // Replace with actual dev IP
+                    def credentialsId = 'ssh-dev-key'
+                    def file = '/tmp/dev_de.html'
+                    def targetPath = '/home/ubuntu'
+
+                    withCredentials([sshUserPrivateKey(credentialsId: credentialsId, keyFileVariable: 'SSH_KEY')]) {
+                        sh """
+                            echo "Copying file to $ip ..."
+                            scp -o StrictHostKeyChecking=no -i \$SSH_KEY $file ${sshUser}@${ip}:${targetPath}
+
+                            echo "Verifying file on $ip ..."
+                            ssh -o StrictHostKeyChecking=no -i \$SSH_KEY ${sshUser}@${ip} "ls -l ${targetPath}"
+                        """
+                    }
+                }
+            }
+        }
+
+        stage('Deploy to PROD') {
+            when {
+                expression { params.DEPLOY_ENV == 'prod' }
+            }
+            steps {
+                echo "🚀 Deploying to PROD Environment"
+                sh 'cp prod/prod.html /tmp/prod_prod.html'
+                script {
+                    def sshUser = 'ubuntu'
+                    def ip = '54.201.123.45' // Replace with actual prod IP
+                    def credentialsId = 'ssh-prod-key'
+                    def file = '/tmp/prod_prod.html'
+                    def targetPath = '/home/ubuntu'
+
+                    withCredentials([sshUserPrivateKey(credentialsId: credentialsId, keyFileVariable: 'SSH_KEY')]) {
+                        sh """
+                            echo "Copying file to $ip ..."
+                            scp -o StrictHostKeyChecking=no -i \$SSH_KEY $file ${sshUser}@${ip}:${targetPath}
+
+                            echo "Verifying file on $ip ..."
+                            ssh -o StrictHostKeyChecking=no -i \$SSH_KEY ${sshUser}@${ip} "ls -l ${targetPath}"
+                        """
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ Build & Deployment to ${params.DEPLOY_ENV} successful!"
+        }
+        failure {
+            echo "❌ Build or Deployment failed for ${params.DEPLOY_ENV}."
+        }
+    }
+}
